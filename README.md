@@ -1,18 +1,33 @@
-1. Pourquoi la liste n'est pas perdue lors d'une rotation ?
-La liste est gardee dans le ViewModel et pas dans l'ecran. A la rotation l'activite est recreee mais le
-ViewModel reste le meme, donc l'ecran recupere l'etat sans refaire la requete.
-2. Pourquoi _uiState est prive et modifiable et uiState public en lecture seule ?
-Pour que seul le ViewModel puisse modifier l'etat. L'ecran l'affiche seulement et appelle les
-fonctions du ViewModel pour le changer (flux unidirectionnel).
-3. Difference entre StateFlow et SharedFlow ?
-StateFlow garde toujours la derniere valeur, c'est un etat (ex : uiState). SharedFlow envoie un
-evenement une seule fois sans le garder (ex : le message de la Snackbar "patient ajoute").
-4. Si age est Int et que l'API renvoie un patient sans age ?
-La conversion du JSON echoue (SerializationException) et l'application affiche "Reponse inattendue
-du serveur". C'est pour ca qu'on met Int? = null.
-5. HttpException ou IOException ?
-HttpException : le serveur repond avec une erreur, par exemple 404 si le patient n'existe pas.
-IOException : le serveur ne repond pas, par exemple s'il est arrete.
-6. Si on remplace l'API par une base Room ?
-On modifie la source de donnees (Entity, Dao, RoomDatabase), le Repository et AppContainer. Le
-ViewModel et l'ecran restent les memes car ils utilisent seulement le Repository.
+# Patients — Android client (MVVM)
+
+An Android app to manage patients and their medical consultations, connected to my own REST API.
+
+**Stack:** Kotlin · Jetpack Compose · MVVM (ViewModel + UI state) · Retrofit · repository pattern with a simple DI container
+
+Back end: [tp-node-mongo](https://github.com/ayednouha707-creator/tp-node-mongo) (Node.js, Express, MongoDB/Mongoose, with Patient, Consultation and Measurement models).
+
+## Features
+
+- List, add, edit and delete patients
+- Consultations per patient, with a list screen and a detail screen
+- Loading / error / success states handled in the UI (`SafeCall` wrapper around network calls)
+
+## Structure
+
+```
+data/model        Patient, Consultation
+data/remote       Retrofit APIs
+data/repository   PatientRepository, ConsultationRepository
+di/AppContainer   dependency container
+ui/patients       screen + ViewModel + UI state
+ui/consultations  list and detail screens + ViewModels
+```
+
+## Run it
+
+1. Start the back end (`npm install && npm run dev` in tp-node-mongo, MongoDB running locally).
+2. Run the app on the Android emulator. It calls `http://10.0.2.2:5000/api/`, which is the host machine's localhost seen from the emulator.
+
+## Author
+
+Nouha Ayed — ISET Bizerte
